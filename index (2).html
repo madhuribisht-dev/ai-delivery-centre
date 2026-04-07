@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Delivery Command Centre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <div class="nav-logo">AI<span>DC</span></div>
+        <div class="nav-title">
+          <div class="nav-name">AI Delivery Command Centre</div>
+          <div class="nav-sub">by <a href="https://madhuribisht-dev.github.io" target="_blank">Madhuri Bisht</a> · TPM & AI Delivery</div>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="https://madhuribisht-dev.github.io" target="_blank">Portfolio</a>
+        <a href="https://linkedin.com/in/madhuri-bishtkaira" target="_blank">LinkedIn</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        Powered by Claude AI
+      </div>
+      <h1>Your AI-Powered<br><span class="gradient-text">Delivery Toolkit</span></h1>
+      <p class="hero-sub">Three intelligent tools that compress hours of PM work into seconds. Built for Technical Project Managers who deliver in the real world.</p>
+      <div class="hero-tools">
+        <div class="tool-chip" onclick="scrollToTool('sprint')">📋 Sprint Planner</div>
+        <div class="tool-chip" onclick="scrollToTool('raid')">⚠️ RAID Generator</div>
+        <div class="tool-chip" onclick="scrollToTool('status')">📊 Status Summarizer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLS -->
+  <main>
+
+    <!-- TOOL 1: SPRINT PLANNER -->
+    <section class="tool-section" id="sprint">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-icon blue">📋</div>
+          <div>
+            <div class="tool-number">01</div>
+            <h2 class="tool-title">AI Sprint Planner</h2>
+            <p class="tool-desc">Paste your user stories and get a fully structured sprint plan with story points, acceptance criteria, risks, and dependencies — in under 60 seconds.</p>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <label>Project Context</label>
+          <input
+            type="text"
+            id="sprint-context"
+            placeholder="e.g. Buy-to-let mortgage application — UK retail banking"
+          />
+        </div>
+
+        <div class="input-area">
+          <label>User Stories <span class="label-hint">(one per line)</span></label>
+          <textarea
+            id="sprint-stories"
+            rows="6"
+            placeholder="As a landlord, I want to enter my loan amount and repayment tenure so that I can see my eligibility instantly.
+As a landlord, I want to upload my property documents so that my application can be verified quickly.
+As a landlord, I want to review and submit my loan application so that I can track its status in real time."
+          ></textarea>
+        </div>
+
+        <div class="input-row">
+          <div class="input-area half">
+            <label>Team Size</label>
+            <input type="number" id="sprint-team" value="4" min="1" max="20"/>
+          </div>
+          <div class="input-area half">
+            <label>Sprint Duration</label>
+            <select id="sprint-duration">
+              <option value="1 week">1 Week</option>
+              <option value="2 weeks" selected>2 Weeks</option>
+              <option value="3 weeks">3 Weeks</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="generate-btn blue-btn" onclick="generateSprint()">
+          <span class="btn-icon">⚡</span>
+          Generate Sprint Plan
+        </button>
+
+        <div class="output-area" id="sprint-output" style="display:none">
+          <div class="output-header">
+            <div class="output-label">Sprint Plan</div>
+            <button class="copy-btn" onclick="copyOutput('sprint-result')">Copy</button>
+          </div>
+          <div class="output-content" id="sprint-result"></div>
+        </div>
+
+        <div class="loading" id="sprint-loading" style="display:none">
+          <div class="spinner"></div>
+          <span>Generating sprint plan...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOL 2: RAID GENERATOR -->
+    <section class="tool-section alt-bg" id="raid">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-icon purple">⚠️</div>
+          <div>
+            <div class="tool-number">02</div>
+            <h2 class="tool-title">AI RAID Log Generator</h2>
+            <p class="tool-desc">Paste your project brief and get a fully populated RAID log — Risks, Assumptions, Issues, Dependencies — with impact ratings, owners, and mitigations.</p>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <label>Project Brief <span class="label-hint">(describe your project, constraints, team, timeline)</span></label>
+          <textarea
+            id="raid-brief"
+            rows="8"
+            placeholder="We are onboarding a new landlord lending product onto our digital banking platform. The product goes live in 10 weeks. The eligibility engine is being built by a third-party vendor and is not yet confirmed for delivery. The document upload feature depends on cloud storage infrastructure currently being provisioned by the DevOps team. Compliance and legal sign-off on the data handling policy is in review and expected within 3 weeks. The front-end team has 4 developers. Business stakeholders expect a UAT demo in week 8."
+          ></textarea>
+        </div>
+
+        <button class="generate-btn purple-btn" onclick="generateRAID()">
+          <span class="btn-icon">⚡</span>
+          Generate RAID Log
+        </button>
+
+        <div class="output-area" id="raid-output" style="display:none">
+          <div class="output-header">
+            <div class="output-label">RAID Log</div>
+            <button class="copy-btn" onclick="copyOutput('raid-result')">Copy</button>
+          </div>
+          <div class="output-content" id="raid-result"></div>
+        </div>
+
+        <div class="loading" id="raid-loading" style="display:none">
+          <div class="spinner"></div>
+          <span>Generating RAID log...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOL 3: STATUS SUMMARIZER -->
+    <section class="tool-section" id="status">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-icon gold">📊</div>
+          <div>
+            <div class="tool-number">03</div>
+            <h2 class="tool-title">AI Status Report Summarizer</h2>
+            <p class="tool-desc">Paste raw team updates and get a professional executive RAG status report — ready to send to your CTO or client. Reduces 90 minutes of work to under 10.</p>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <label>Project Name</label>
+          <input type="text" id="status-project" placeholder="e.g. Landlord Lending Platform — Q2 Release"/>
+        </div>
+
+        <div class="input-area">
+          <label>Raw Team Updates <span class="label-hint">(paste exactly as received — no formatting needed)</span></label>
+          <textarea
+            id="status-updates"
+            rows="8"
+            placeholder="Dev team: Login screen done, working on document upload but blocked on S3 bucket access, should be ready by EOD tomorrow if DevOps sorts it.
+
+QA: Finished testing login flow, found 3 bugs — 2 minor, 1 medium. All logged in JIRA. Haven't started document upload testing yet, waiting on dev.
+
+DevOps: S3 bucket provisioning delayed, cloud team needs security approval, chasing since Monday, no ETA.
+
+Compliance: Data handling policy review ongoing, legal asked for two clarifications, estimate another week minimum.
+
+Stakeholder note: Client expecting demo on Friday. Nobody confirmed scope yet."
+          ></textarea>
+        </div>
+
+        <button class="generate-btn gold-btn" onclick="generateStatus()">
+          <span class="btn-icon">⚡</span>
+          Generate Status Report
+        </button>
+
+        <div class="output-area" id="status-output" style="display:none">
+          <div class="output-header">
+            <div class="output-label">Executive Status Report</div>
+            <button class="copy-btn" onclick="copyOutput('status-result')">Copy</button>
+          </div>
+          <div class="output-content" id="status-result"></div>
+        </div>
+
+        <div class="loading" id="status-loading" style="display:none">
+          <div class="spinner"></div>
+          <span>Generating status report...</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">AI Delivery Command Centre</div>
+      <div class="footer-sub">Built by <a href="https://madhuribisht-dev.github.io" target="_blank">Madhuri Bisht</a> · Technical Project Manager · PMP® · PSM I · AI-Augmented Delivery</div>
+      <div class="footer-links">
+        <a href="https://madhuribisht-dev.github.io" target="_blank">Portfolio</a>
+        <a href="https://github.com/madhuribisht-dev/ai-delivery-centre" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/in/madhuri-bishtkaira" target="_blank">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
