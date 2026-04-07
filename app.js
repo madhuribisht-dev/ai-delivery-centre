@@ -1,5 +1,8 @@
+// ── MARKED CONFIG ─────────────────────────────────────────
+marked.setOptions({ breaks: true, gfm: true });
+
 // ── API CALL ──────────────────────────────────────────────
-async function callClaude(system, userMessage) {
+async function callAI(system, userMessage) {
   const response = await fetch('/api/claude', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -26,177 +29,244 @@ function showLoading(tool) {
 
 function showOutput(tool, content) {
   document.getElementById(`${tool}-loading`).style.display = 'none';
-  document.getElementById(`${tool}-output`).style.display = 'block';
-  document.getElementById(`${tool}-result`).textContent = content;
-  document.getElementById(`${tool}-output`).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const outputEl = document.getElementById(`${tool}-output`);
+  outputEl.style.display = 'block';
+  // Render markdown
+  document.getElementById(`${tool}-result`).innerHTML = marked.parse(content);
+  // Store raw for copy
+  document.getElementById(`${tool}-result-raw`).value = content;
+  outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function showError(tool, message) {
   document.getElementById(`${tool}-loading`).style.display = 'none';
-  document.getElementById(`${tool}-output`).style.display = 'block';
-  document.getElementById(`${tool}-result`).textContent = `Error: ${message}\n\nPlease check your API configuration and try again.`;
+  const outputEl = document.getElementById(`${tool}-output`);
+  outputEl.style.display = 'block';
+  document.getElementById(`${tool}-result`).innerHTML =
+    `<p style="color:#f87171"><strong>Error:</strong> ${message}</p><p style="color:var(--muted);font-size:0.85rem;margin-top:0.5rem">Please wait a moment and try again. If the issue persists, the API rate limit may have been reached.</p>`;
+  document.getElementById(`${tool}-result-raw`).value = `Error: ${message}`;
 }
 
 function copyOutput(id) {
-  const text = document.getElementById(id).textContent;
+  const text = document.getElementById(id).value;
   navigator.clipboard.writeText(text).then(() => {
     const btn = event.target;
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 2000);
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 2000);
   });
 }
 
 function scrollToTool(id) {
-  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ── SPRINT PLANNER ────────────────────────────────────────
+function setLoading(tool, loading) {
+  const btn = document.querySelector(`#${tool} .generate-btn`);
+  if (btn) btn.disabled = loading;
+}
+
+// ── TOOL 1: SPRINT PLANNER ────────────────────────────────
 async function generateSprint() {
   const context = document.getElementById('sprint-context').value.trim();
   const stories = document.getElementById('sprint-stories').value.trim();
   const teamSize = document.getElementById('sprint-team').value;
   const duration = document.getElementById('sprint-duration').value;
 
-  if (!stories) {
-    alert('Please enter at least one user story.');
-    return;
-  }
+  if (!stories) { alert('Please enter at least one user story.'); return; }
 
-  const btn = document.querySelector('#sprint .generate-btn');
-  btn.disabled = true;
+  setLoading('sprint', true);
   showLoading('sprint');
 
-  const system = `You are a Senior Agile Delivery Manager and Technical Project Manager with 10+ years of experience in banking and financial services. You produce precise, professional sprint plans that delivery teams can act on immediately. Always use Fibonacci story points (1, 2, 3, 5, 8, 13). Be specific and practical.`;
+  const system = `You are a Senior Agile Delivery Manager and Technical Project Manager with 10+ years of experience in banking and financial services. You produce precise, professional sprint plans that delivery teams can act on immediately. Use Fibonacci story points (1, 2, 3, 5, 8, 13). Format your response using markdown with clear headers, tables where appropriate, and structured sections.`;
 
-  const userMessage = `Generate a detailed sprint plan for the following:
+  const prompt = `Generate a detailed sprint plan for the following:
 
-PROJECT CONTEXT: ${context || 'Not specified'}
-TEAM SIZE: ${teamSize} developers
-SPRINT DURATION: ${duration}
+**PROJECT CONTEXT:** ${context || 'Not specified'}
+**TEAM SIZE:** ${teamSize} developers
+**SPRINT DURATION:** ${duration}
 
-USER STORIES:
+**USER STORIES:**
 ${stories}
 
 For each user story provide:
-1. Story Points (Fibonacci: 1,2,3,5,8,13) with clear justification
-2. Acceptance Criteria (minimum 3 specific, testable criteria)
-3. Assumptions
-4. Dependencies
-5. Risks
+- Story Points (Fibonacci) with clear justification
+- Acceptance Criteria (minimum 3 specific, testable criteria)
+- Assumptions
+- Dependencies  
+- Risks
 
-Then provide a SPRINT SUMMARY including:
+Then provide a **SPRINT SUMMARY** with:
 - Total story points
-- Recommended sprint commitment (accounting for ceremonies, meetings, buffer)
+- Recommended sprint commitment (accounting for ceremonies and buffer)
 - Top 3 delivery risks
-- Recommended sprint goal statement
+- Sprint goal statement
 
-Format clearly with headers and sections. Be specific to banking/financial services context where relevant.`;
+Use markdown formatting — headers, bold text, and tables where helpful.`;
 
   try {
-    const result = await callClaude(system, userMessage);
+    const result = await callAI(system, prompt);
     showOutput('sprint', result);
   } catch (err) {
     showError('sprint', err.message);
   } finally {
-    btn.disabled = false;
+    setLoading('sprint', false);
   }
 }
 
-// ── RAID GENERATOR ────────────────────────────────────────
+// ── TOOL 2: RAID GENERATOR ────────────────────────────────
 async function generateRAID() {
   const brief = document.getElementById('raid-brief').value.trim();
+  if (!brief) { alert('Please enter a project brief.'); return; }
 
-  if (!brief) {
-    alert('Please enter a project brief.');
-    return;
-  }
-
-  const btn = document.querySelector('#raid .generate-btn');
-  btn.disabled = true;
+  setLoading('raid', true);
   showLoading('raid');
 
-  const system = `You are a Senior Project Manager and Risk Analyst with 10+ years delivering regulated banking and financial services products. You produce comprehensive, realistic RAID logs that capture what teams actually face — not generic textbook risks. Always assign impact as High/Medium/Low and suggest specific owner roles (not names).`;
+  const system = `You are a Senior Project Manager and Risk Analyst with 10+ years delivering regulated banking and financial services products. You produce comprehensive, realistic RAID logs. Format your response in clean markdown with tables for each RAID section.`;
 
-  const userMessage = `Analyse this project brief and generate a fully populated RAID log:
+  const prompt = `Analyse this project brief and generate a fully populated RAID log:
 
-PROJECT BRIEF:
+**PROJECT BRIEF:**
 ${brief}
 
-Generate four separate sections:
+Generate four sections as markdown tables:
 
-RISKS — things that could go wrong and impact delivery
-ASSUMPTIONS — things we are betting on being true  
-ISSUES — things already going wrong right now
-DEPENDENCIES — things we are waiting on from others
+## RISKS
+| ID | Description | Impact | Owner | Mitigation |
+(minimum 4 risks)
 
-For each item use this format:
-ID | Description | Impact (H/M/L) | Owner Role | Mitigation / Action
+## ASSUMPTIONS  
+| ID | Description | Impact | Owner | Action if Wrong |
+(minimum 3 assumptions)
 
-Minimum 3-4 items per section. Be specific to the context provided.
+## ISSUES
+| ID | Description | Impact | Owner | Action |
+(minimum 3 current issues)
 
-After the four tables, add:
-PROJECT HEALTH SUMMARY
-- Overall RAG Status (Red/Amber/Green) with one paragraph justification
-- Top 3 immediate actions required this week`;
+## DEPENDENCIES
+| ID | Description | Impact | Owner | Mitigation |
+(minimum 3 dependencies)
+
+After the tables add:
+
+## PROJECT HEALTH SUMMARY
+- **Overall RAG Status:** Red / Amber / Green
+- **Justification:** One paragraph
+- **Top 3 Immediate Actions Required This Week:**`;
 
   try {
-    const result = await callClaude(system, userMessage);
+    const result = await callAI(system, prompt);
     showOutput('raid', result);
   } catch (err) {
     showError('raid', err.message);
   } finally {
-    btn.disabled = false;
+    setLoading('raid', false);
   }
 }
 
-// ── STATUS SUMMARIZER ─────────────────────────────────────
+// ── TOOL 3: STATUS SUMMARIZER ─────────────────────────────
 async function generateStatus() {
   const project = document.getElementById('status-project').value.trim();
   const updates = document.getElementById('status-updates').value.trim();
+  if (!updates) { alert('Please paste your team updates.'); return; }
 
-  if (!updates) {
-    alert('Please paste your team updates.');
-    return;
-  }
-
-  const btn = document.querySelector('#status .generate-btn');
-  btn.disabled = true;
+  setLoading('status', true);
   showLoading('status');
 
-  const system = `You are a Senior Project Manager preparing executive status reports for CTOs and senior client stakeholders in regulated banking environments. You write with clarity, precision, and appropriate urgency. You never use bullet soup — you use structured short paragraphs. You always make decisions required explicit and actionable.`;
+  const system = `You are a Senior Project Manager preparing executive status reports for CTOs and senior client stakeholders in regulated banking environments. You write with clarity and appropriate urgency. Format using markdown.`;
 
-  const userMessage = `Convert these raw team updates into a professional executive RAG status report.
+  const prompt = `Convert these raw team updates into a professional executive RAG status report.
 
-PROJECT: ${project || 'Project Status Update'}
+**PROJECT:** ${project || 'Project Status Update'}
 
-RAW TEAM UPDATES:
+**RAW TEAM UPDATES:**
 ${updates}
 
-Generate a status report with these exact sections:
+Generate a formatted markdown status report with these sections:
 
-1. OVERALL RAG STATUS
-Red / Amber / Green with one sentence justification
+## Overall RAG Status
+🔴 RED / 🟡 AMBER / 🟢 GREEN — one sentence justification
 
-2. PROGRESS THIS WEEK
-What was completed this week (professional prose, not bullet points)
+## Progress This Week
+What was completed (professional prose)
 
-3. KEY RISKS AND BLOCKERS
-What is threatening delivery — with impact level and recommended action for each
+## Key Risks and Blockers
+| Risk | Impact | Recommended Action |
+(table format)
 
-4. DECISIONS REQUIRED
-Specific decisions needed from leadership or stakeholders this week — with enough context to act
+## Decisions Required
+Specific decisions needed from leadership this week — numbered list with enough context to act immediately
 
-5. PLAN FOR NEXT WEEK
-What the team is committing to deliver next week
-
-Format as a professional executive report. Language suitable for CTO and client audience.`;
+## Plan for Next Week
+What the team is committing to deliver`;
 
   try {
-    const result = await callClaude(system, userMessage);
+    const result = await callAI(system, prompt);
     showOutput('status', result);
   } catch (err) {
     showError('status', err.message);
   } finally {
-    btn.disabled = false;
+    setLoading('status', false);
+  }
+}
+
+// ── TOOL 4: PROJECT HEALTH SCORECARD ─────────────────────
+async function generateHealth() {
+  const project = document.getElementById('health-project').value.trim();
+  const week = document.getElementById('health-week').value.trim();
+  const velocity = document.getElementById('health-velocity').value.trim();
+  const delivery = document.getElementById('health-delivery').value.trim();
+  const defects = document.getElementById('health-defects').value.trim();
+  const capacity = document.getElementById('health-capacity').value.trim();
+  const risks = document.getElementById('health-risks').value.trim();
+  const milestone = document.getElementById('health-milestone').value.trim();
+
+  if (!velocity && !risks) { alert('Please enter at least velocity trend and key risks.'); return; }
+
+  setLoading('health', true);
+  showLoading('health');
+
+  const system = `You are a senior delivery consultant and programme director with 15+ years experience assessing project health for banking and enterprise clients. You produce precise, actionable health scorecards that cut through noise and give leadership what they need to make decisions. Format using markdown.`;
+
+  const prompt = `Generate a comprehensive Project Health Scorecard for the following project:
+
+**Project:** ${project || 'Project Assessment'}
+**Timeline:** ${week || 'Not specified'}
+**Velocity Trend (last 4 sprints):** ${velocity || 'Not provided'}
+**On-Time Delivery Rate:** ${delivery || 'Not provided'}
+**Open Defects:** ${defects || 'Not provided'}
+**Team Capacity:** ${capacity || 'Not provided'}
+**Key Blockers / Risks:** ${risks || 'Not provided'}
+**Milestone Status:** ${milestone || 'Not provided'}
+
+Generate a health scorecard with:
+
+## Overall Health Score: X/100
+One sentence verdict.
+
+## Health by Dimension
+| Dimension | Score | Status | Key Finding |
+Score each: Delivery Velocity | Quality | Risk Exposure | Team Health | Stakeholder Alignment | Timeline Confidence
+
+## RAG Status
+🔴 / 🟡 / 🟢 with one paragraph justification
+
+## Critical Flags
+Top 3 things that need immediate leadership attention — numbered, specific, actionable
+
+## Recommended Actions This Week
+| Priority | Action | Owner | Deadline |
+
+## 2-Week Forecast
+If current trajectory continues — what happens? What changes if top action is taken?`;
+
+  try {
+    const result = await callAI(system, prompt);
+    showOutput('health', result);
+  } catch (err) {
+    showError('health', err.message);
+  } finally {
+    setLoading('health', false);
   }
 }
