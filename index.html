@@ -60,7 +60,7 @@
 
         <div class="input-area">
           <label>Project Context</label>
-          <input type="text" id="sprint-context" placeholder="e.g. Buy-to-let mortgage application — UK retail banking"/>
+          <input type="text" id="sprint-context" placeholder="e.g. Customer onboarding portal — financial services platform"/>
         </div>
 
         <div class="input-area">
@@ -119,7 +119,7 @@ As a landlord, I want to submit my application so that I can track its status in
 
         <div class="input-area">
           <label>Project Brief <span class="label-hint">— describe project, constraints, team, timeline</span></label>
-          <textarea id="raid-brief" rows="7" placeholder="We are onboarding a new landlord lending product onto our digital banking platform. The product goes live in 10 weeks. The eligibility engine is being built by a third-party vendor and is not yet confirmed for delivery..."></textarea>
+          <textarea id="raid-brief" rows="7" placeholder="We are building a digital onboarding journey for a financial services product. Go-live is in 10 weeks. The eligibility engine is being built by a third-party vendor and delivery is not yet confirmed. The document upload feature depends on cloud storage infrastructure currently being provisioned by the DevOps team. Compliance sign-off on the data handling policy is expected within 3 weeks."></textarea>
         </div>
 
         <button class="generate-btn purple-btn" onclick="generateRAID()">
@@ -161,9 +161,10 @@ As a landlord, I want to submit my application so that I can track its status in
 
         <div class="input-area">
           <label>Raw Team Updates <span class="label-hint">— paste exactly as received</span></label>
-          <textarea id="status-updates" rows="7" placeholder="Dev team: Login screen done, working on document upload but blocked on S3...
-QA: Finished testing login flow, found 3 bugs — 2 minor, 1 medium...
-DevOps: S3 provisioning delayed, cloud team needs security approval..."></textarea>
+          <textarea id="status-updates" rows="7" placeholder="Dev team: Authentication module complete. Document upload 70% done, blocked on cloud storage access since Monday.
+QA: Completed regression on auth module. Found 3 bugs — 2 minor, 1 medium. Waiting on document upload to start end-to-end testing.
+DevOps: Cloud storage provisioning delayed, security approval pending. No ETA from infrastructure team yet.
+Product: Client demo scheduled Friday. Scope not yet confirmed with stakeholders."></textarea>
         </div>
 
         <button class="generate-btn gold-btn" onclick="generateStatus()">
@@ -201,7 +202,7 @@ DevOps: S3 provisioning delayed, cloud team needs security approval..."></textar
         <div class="input-row">
           <div class="input-area">
             <label>Project Name</label>
-            <input type="text" id="health-project" placeholder="e.g. NBS Landlord Lending Platform"/>
+            <input type="text" id="health-project" placeholder="e.g. Digital Onboarding Platform"/>
           </div>
           <div class="input-area">
             <label>Current Week / Total</label>
@@ -233,12 +234,12 @@ DevOps: S3 provisioning delayed, cloud team needs security approval..."></textar
 
         <div class="input-area">
           <label>Key Blockers / Open Risks</label>
-          <textarea id="health-risks" rows="3" placeholder="S3 provisioning blocked since Monday. Compliance sign-off delayed by 1 week. Client demo Friday with senior leadership attending. Document upload feature at risk."></textarea>
+          <textarea id="health-risks" rows="3" placeholder="Cloud storage provisioning blocked since Monday. Compliance sign-off delayed by 1 week. Client demo Friday with senior leadership attending. Document upload feature at risk of not being ready."></textarea>
         </div>
 
         <div class="input-area">
           <label>Milestone Status</label>
-          <input type="text" id="health-milestone" placeholder="e.g. UAT demo week 8 — at risk. Go-live week 10 — on track."/>
+          <input type="text" id="health-milestone" placeholder="e.g. UAT demo week 8 — at risk due to infrastructure delays. Go-live week 10 — currently on track."/>
         </div>
 
         <button class="generate-btn green-btn" onclick="generateHealth()">
@@ -281,7 +282,7 @@ DevOps: S3 provisioning delayed, cloud team needs security approval..."></textar
   <footer>
     <div class="footer-inner">
       <div class="footer-brand">AI Delivery Command Centre</div>
-      <div class="footer-sub">Open source · <a href="https://github.com/madhuribisht-dev/ai-delivery-centre" target="_blank">GitHub</a> · Built with Groq AI + Llama 3</div>
+      <div class="footer-sub">Open source · <a href="https://github.com/madhuribisht-dev/ai-delivery-centre"  target="_blank">GitHub</a> · Built with Groq AI + Llama 3</div>
     </div>
   </footer>
 
