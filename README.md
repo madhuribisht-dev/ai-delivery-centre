@@ -57,7 +57,7 @@ The API key is stored as a Vercel environment variable and never appears in the 
 
 ## Why I Built This
 
-I spent 11 years delivering technology programmes in Banking, Telecom, and Travel — including 16 months onshore in London as the single point of contact for a UK retail banking platform modernisation. Sprint planning, RAID logs, and status reporting were a constant part of my work.
+I spent 11 years delivering technology programmes in Banking, Telecom, and Travel — including 18 months onshore in London as the single point of contact for a UK retail banking platform modernisation. Sprint planning, RAID logs, and status reporting were a constant part of my work.
 
 The most frustrating part was never the thinking — it was the blank page. This tool solves that.
 
@@ -80,7 +80,7 @@ PMP® · PSM I · AZ-900 · Google PM Certified
 11+ years in Banking & Financial Services · India & UK
 
 Portfolio: [madhuribisht-dev.github.io](https://madhuribisht-dev.github.io)
-LinkedIn: [linkedin.com/in/madhuri-bishtkaira](https://linkedin.com/in/madhuri-bishtkaira)
+LinkedIn: [linkedin.com/in/madhuri-bishtkaira](https://linkedin.com/in/madhuri-bisht-kaira)
 
 ---
 
